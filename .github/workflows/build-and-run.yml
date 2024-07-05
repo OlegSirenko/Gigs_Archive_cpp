@@ -26,9 +26,9 @@ jobs:
     - name: Clone TgBot-cpp
       run: git clone https://github.com/reo7sp/tgbot-cpp
     - name: cd and make
-    - run: cd tgbot-cpp & cmake . & make -j4
+      run: cd tgbot-cpp & cmake . & make -j4
     - name: Install tgbot
-    - run: sudo make install
+      run: sudo make install
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
