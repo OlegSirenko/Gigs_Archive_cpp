@@ -1,0 +1,5 @@
+# ninja log v5
+4970	5606	1720184341479549945	TelegramBot_For_Fincding_Faces	18e6fe1889dff54d
+1	4613	1720184505178009845	CMakeFiles/Gigs_Archive.dir/main.cpp.o	d0be3c3fd3de7c09
+1	4997	1720184505562010923	CMakeFiles/Gigs_Archive.dir/modules/CommandHandler.cpp.o	2594e606385220f7
+4997	5649	1720184506214012755	Gigs_Archive	5fb8e91dd3bba15f
