@@ -68,7 +68,7 @@ void CommandHandler::sendToApproval(const TgBot::Message::Ptr &message) {
 void CommandHandler::handleCallbackQuery(const TgBot::CallbackQuery::Ptr& callback) {
 
     if(callback->data == Messages::Moderation::SUCCESS[1]){
-        bot_.getApi().copyMessage(Config::chat_ids::main_channel_id, callback->message->chat->id, callback->message->messageId);
+        bot_.getApi().copyMessage(Config::chat_ids::dev_channel_id, callback->message->chat->id, callback->message->messageId);
     }
     bot_.getApi().deleteMessage(callback->message->chat->id, callback->message->messageId);
 }
