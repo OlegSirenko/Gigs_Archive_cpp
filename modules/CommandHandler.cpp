@@ -28,7 +28,7 @@ void CommandHandler::handleStart(const TgBot::Message::Ptr& message){
     std::int64_t chat_id = message->chat->id;
     bot_.getApi().sendMessage(chat_id, Messages::Help::Common::GREETING);
     bot_.getApi().sendMessage(chat_id, Messages::Help::Common::EXAMPLE);
-    bot_.getApi().sendPhoto(chat_id, message->chat->photo->bigFileId, "#афиша");
+    bot_.getApi().sendPhoto(chat_id, message->chat->photo->smallFileUniqueId, "#афиша");
 }
 
 void CommandHandler::handleUnknown(const TgBot::Message::Ptr &unknownCommand) {
@@ -36,7 +36,7 @@ void CommandHandler::handleUnknown(const TgBot::Message::Ptr &unknownCommand) {
 }
 
 void CommandHandler::handlePoster(const TgBot::Message::Ptr& message){
-    std::cout <<"Chat ID " << message->chat->id<<" Chat name "<< message->chat->title<<std::endl;
+    //std::cout <<"Chat ID " << message->chat->id<<" Chat name "<< message->chat->title<<std::endl;
     if(message->from->isBot){
 
         return;
