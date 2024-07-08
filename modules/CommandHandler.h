@@ -13,17 +13,20 @@
 
 class CommandHandler {
 public:
-    explicit CommandHandler(TgBot::Bot&);
+    explicit CommandHandler(TgBot::Bot&, std::string);
     void register_commands();
 
 private:
     TgBot::Bot& bot_;
+    string workspace_;
     TgBot::InlineKeyboardMarkup::Ptr keyboard;
     void handleStart(const TgBot::Message::Ptr& message);
     void handleUnknown(const TgBot::Message::Ptr& unknownCommand);
     void handlePoster(const TgBot::Message::Ptr& message);
     void sendToApproval(const TgBot::Message::Ptr& message);
     void handleCallbackQuery(const TgBot::CallbackQuery::Ptr&);
+
+
 };
 
 

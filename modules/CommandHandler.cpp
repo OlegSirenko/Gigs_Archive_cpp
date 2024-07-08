@@ -4,7 +4,9 @@
 
 #include "CommandHandler.h"
 
-CommandHandler::CommandHandler(TgBot::Bot &bot):bot_(bot) {}
+#include <utility>
+
+CommandHandler::CommandHandler(TgBot::Bot &bot, std::string workspace):bot_(bot),workspace_(std::move(workspace)) {}
 
 void CommandHandler::register_commands() {
     bot_.getEvents().onUnknownCommand([this](const TgBot::Message::Ptr& unknownCommand){
@@ -25,10 +27,12 @@ void CommandHandler::register_commands() {
 
 // HANDLERS
 void CommandHandler::handleStart(const TgBot::Message::Ptr& message){
+    std::cout<<" Chat ID on start command "<< message->chat->id<<std::endl;
     std::int64_t chat_id = message->chat->id;
     bot_.getApi().sendMessage(chat_id, Messages::Help::Common::GREETING);
     bot_.getApi().sendMessage(chat_id, Messages::Help::Common::EXAMPLE);
-    bot_.getApi().sendPhoto(chat_id, message->chat->photo->smallFileUniqueId, "#афиша");
+
+    bot_.getApi().sendPhoto(chat_id, TgBot::InputFile::fromFile(workspace_+"/Posters/latest_poster.jpeg", "image/jpeg"), "#афиша");
 }
 
 void CommandHandler::handleUnknown(const TgBot::Message::Ptr &unknownCommand) {

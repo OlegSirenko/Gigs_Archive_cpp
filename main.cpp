@@ -11,11 +11,12 @@ using namespace TgBot;
 
 int main() {
     std::string token(getenv("TOKEN"));
+    std::string workspace(getenv("ENV"));
     printf("Token: %s\n", token.c_str());
-
+    std::cout<<"Workspave: "<<workspace<<std::endl;
     Bot bot(token);
 
-    CommandHandler commandHandler(bot);
+    CommandHandler commandHandler(bot, workspace);
     commandHandler.register_commands();
 
     signal(SIGINT, [](int s) {
