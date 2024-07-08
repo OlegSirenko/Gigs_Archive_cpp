@@ -18,7 +18,8 @@ namespace Messages {
 
         namespace UnknownCommands{
             const string UNKNOWN_COMMAND = "Извини, но в боте нет такой команды: ";
-
+            const string POSTER_NO_CAPTION = "Ожидается \"#афиша\" как подпись к картинке. \nИспользуй /help если что-то не получается. ";
+            const string POSTER_NO_PHOTO = "Ожидается \"#афиша\" как подпись к картинке. Отправь картинку вместе с подписью. Пример в: /help";
         }
 
     }

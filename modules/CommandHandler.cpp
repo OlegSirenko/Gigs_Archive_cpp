@@ -40,10 +40,12 @@ void CommandHandler::handlePoster(const TgBot::Message::Ptr& message){
         return;
     }
     if(!message->photo.data()){
+        bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_PHOTO);
         return;
     }
 
     if(message->caption.empty()){
+        bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_CAPTION);
         return;
     }
     std::cout<<message->photo.back()->fileId<<std::endl;
