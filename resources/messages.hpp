@@ -7,7 +7,8 @@ using namespace std;
 
 namespace Messages {
     namespace CommonNames{
-        const string POSTER = "#афиша";
+        const string POSTER_RU = "#афиша";
+        const string POSTER_EN = "#poster";
     }
     namespace Help {
         namespace Common {
@@ -25,8 +26,8 @@ namespace Messages {
     }
     namespace Moderation {
         const string ON_MODERATION = "Ваша афиша на модерации. Пожалуйста, подождите... ";
-        const vector<string> SUCCESS = {"Approve", "Approved"};
-        const vector<string> DENIED = {"Decline", "Declined"};
+        const vector<string> SUCCESS = {"Approve", "Approved", "Ваша афиша отправлена в канал https://t.me/GigsArchive."};
+        const vector<string> DENIED = {"Decline", "Declined", "Модератор отклонил ваше сообщение"};
     }
 
     // Add other message constants here
