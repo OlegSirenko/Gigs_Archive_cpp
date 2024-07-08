@@ -10,7 +10,7 @@
 using namespace TgBot;
 
 int main() {
-    std::string token("5609971091:AAGoD_Xe7IpZ0QAoWCxBfV34H5MCcZ8_oVs");
+    std::string token(getenv("TOKEN"));
     printf("Token: %s\n", token.c_str());
 
     Bot bot(token);
