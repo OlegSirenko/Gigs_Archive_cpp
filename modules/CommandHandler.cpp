@@ -36,6 +36,7 @@ void CommandHandler::handleUnknown(const TgBot::Message::Ptr &unknownCommand) {
 }
 
 void CommandHandler::handlePoster(const TgBot::Message::Ptr& message){
+    std::cout <<"Chat ID " << message->chat->id<<" Chat name "<< message->chat->title<<std::endl;
     if(message->chat->id == Config::chat_ids::dev_channel_id || message->chat->id == Config::chat_ids::main_channel_id){
         return;
     }
