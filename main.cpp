@@ -9,6 +9,10 @@
 
 using namespace TgBot;
 
+void sigintHandler(int signal) {
+    std::cout << "SIGINT received. Exiting gracefully..." << std::endl;
+    exit(0);
+}
 
 int main() {
     //std::string token("");
@@ -21,10 +25,7 @@ int main() {
     commandHandler.register_commands();
     commandHandler.logger.logInfo(__FUNCTION__ , "Commands registered");
 
-    signal(SIGINT, [](int s) {
-        printf("SIGINT got\n");
-        exit(0);
-    });
+    std::signal(SIGINT, sigintHandler);
 
     try {
         printf("Bot username: %s\n", bot.getApi().getMe()->username.c_str());
@@ -32,13 +33,10 @@ int main() {
 
         TgLongPoll longPoll(bot);
         while (true) {
-            //printf("Long poll started\n");
-            commandHandler.logger.logInfo(__FUNCTION__ , "Long poll started");
-
             longPoll.start();
         }
     } catch (std::exception& e) {
-        printf("error: %s\n", e.what());
+        commandHandler.logger.logError(__FUNCTION__ , "{!!! WHILE LOOP ENDED WITH ERROR --- \t", e.what(), "\t}");
     }
 
     return 0;
