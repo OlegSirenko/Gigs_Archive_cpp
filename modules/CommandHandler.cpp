@@ -38,7 +38,7 @@ void CommandHandler::handleStart(const TgBot::Message::Ptr& message){
         logger.logInfo(__FUNCTION__, "Sending photo");
         logger.logInfo(__FUNCTION__, "Trying to get image: ", (workspace_ + "/Posters/latest_poster.jpeg").c_str());
         bot_.getApi().sendPhoto(chat_id,
-                                TgBot::InputFile::fromFile(workspace_ + "/Posters/latest_poster.jpeg", "image/jpeg"),
+                                "https://github.com/OlegSirenko/Gigs_Archive_cpp/blob/main/resources/img.png?raw=true",
                                 "#афиша");
         logger.logInfo(__FUNCTION__, "Start command successful");
     }
