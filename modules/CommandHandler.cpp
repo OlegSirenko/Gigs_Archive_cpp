@@ -6,7 +6,10 @@
 
 #include <utility>
 
-CommandHandler::CommandHandler(TgBot::Bot &bot, std::string workspace):bot_(bot),workspace_(std::move(workspace)) {}
+
+CommandHandler::CommandHandler(TgBot::Bot &bot, std::string workspace):bot_(bot),workspace_(std::move(workspace)) {
+
+}
 
 void CommandHandler::register_commands() {
     bot_.getEvents().onUnknownCommand([this](const TgBot::Message::Ptr& unknownCommand){
@@ -27,12 +30,20 @@ void CommandHandler::register_commands() {
 
 // HANDLERS
 void CommandHandler::handleStart(const TgBot::Message::Ptr& message){
-    std::cout<<" Chat ID on start command "<< message->chat->id<<std::endl;
-    std::int64_t chat_id = message->chat->id;
-    bot_.getApi().sendMessage(chat_id, Messages::Help::Common::GREETING);
-    bot_.getApi().sendMessage(chat_id, Messages::Help::Common::EXAMPLE);
-
-    bot_.getApi().sendPhoto(chat_id, TgBot::InputFile::fromFile(workspace_+"/Posters/latest_poster.jpeg", "image/jpeg"), "#афиша");
+    try {
+        logger.logInfo(__FUNCTION__, "Chat ID on start command: ", to_string(message->chat->id).c_str());
+        std::int64_t chat_id = message->chat->id;
+        bot_.getApi().sendMessage(chat_id, Messages::Help::Common::GREETING);
+        bot_.getApi().sendMessage(chat_id, Messages::Help::Common::EXAMPLE);
+        logger.logInfo(__FUNCTION__, "Sending photo");
+        bot_.getApi().sendPhoto(chat_id,
+                                TgBot::InputFile::fromFile(workspace_ + "/Posters/latest_poster.jpeg", "image/jpeg"),
+                                "#афиша");
+        logger.logInfo(__FUNCTION__, "Start command successful");
+    }
+    catch (std::exception& exception){
+        logger.logError(__FUNCTION__, exception.what());
+    }
 }
 
 void CommandHandler::handleUnknown(const TgBot::Message::Ptr &unknownCommand) {
@@ -41,59 +52,86 @@ void CommandHandler::handleUnknown(const TgBot::Message::Ptr &unknownCommand) {
 
 void CommandHandler::handlePoster(const TgBot::Message::Ptr& message){
     //std::cout <<"Chat ID " << message->chat->id<<" Chat name "<< message->chat->title<<std::endl;
-    if(message->from->isBot){
 
-        return;
+    try{
+        if(message->from->isBot){
+            logger.logWarn(__FUNCTION__, "Message from bot");
+            return;
+        }
+        if(message->chat->id == Config::chat_ids::dev_channel_id || message->chat->id == Config::chat_ids::main_channel_id || message->chat->id == Config::chat_ids::main_discussion_id){
+            logger.logInfo(__FUNCTION__, "Message from main channel");
+            return;
+
+        }
+        if(!message->photo.data()){
+            logger.logWarn(__FUNCTION__, "Message from bot");
+            bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_PHOTO);
+            return;
+        }
+
+        if((message->caption.empty() != 0)){
+            logger.logWarn(__FUNCTION__, "Caption empty");
+            bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_CAPTION);
+            return;
+        }
+
+        if(!(message->caption == Messages::CommonNames::POSTER_RU)){
+            logger.logWarn(__FUNCTION__, "Caption not valid: ", message->caption.c_str() , " from: ", (message->chat->firstName).c_str());
+            bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_CAPTION);
+            return;
+        }
+
+        bot_.getApi().sendMessage(message->chat->id, Messages::Moderation::ON_MODERATION);
+
+        sendToApproval(message);
+        logger.logInfo(__FUNCTION__, "Handle poster successful");
     }
-    if(message->chat->id == Config::chat_ids::dev_channel_id || message->chat->id == Config::chat_ids::main_channel_id || message->chat->id == Config::chat_ids::main_discussion_id){
-        return;
+    catch (std::exception& exception){
+        logger.logError(__FUNCTION__, exception.what());
     }
-    if(!message->photo.data()){
-        bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_PHOTO);
-        return;
-    }
-
-    if((message->caption.empty() != 0)){
-        bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_CAPTION);
-        return;
-    }
-
-    if(!(message->caption == Messages::CommonNames::POSTER_RU)){
-        bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_CAPTION);
-        return;
-    }
-
-    std::cout<<message->photo.back()->fileId<<std::endl;
-
-    bot_.getApi().sendMessage(message->chat->id, Messages::Moderation::ON_MODERATION);
-
-    sendToApproval(message);
 }
 
 void CommandHandler::sendToApproval(const TgBot::Message::Ptr &message) {
-    // Setup Inline keyboard
-    keyboard = std::make_shared<TgBot::InlineKeyboardMarkup>();
-    TgBot::InlineKeyboardButton::Ptr approveButton = std::make_shared<TgBot::InlineKeyboardButton>(Messages::Moderation::SUCCESS[0].c_str(), "", (Messages::Moderation::SUCCESS[1]+"@"+to_string((message->chat->id))).c_str());
-    TgBot::InlineKeyboardButton::Ptr declineButton = std::make_shared<TgBot::InlineKeyboardButton>(Messages::Moderation::DENIED[0].c_str(), "",Messages::Moderation::DENIED[1]+"@"+to_string((message->chat->id)).c_str());
-    keyboard->inlineKeyboard.push_back({approveButton, declineButton});
+    try {
+        // Setup Inline keyboard
+        keyboard = std::make_shared<TgBot::InlineKeyboardMarkup>();
+        TgBot::InlineKeyboardButton::Ptr approveButton = std::make_shared<TgBot::InlineKeyboardButton>(
+                Messages::Moderation::SUCCESS[0].c_str(), "",
+                (Messages::Moderation::SUCCESS[1] + "@" + to_string((message->chat->id))).c_str());
+        TgBot::InlineKeyboardButton::Ptr declineButton = std::make_shared<TgBot::InlineKeyboardButton>(
+                Messages::Moderation::DENIED[0].c_str(), "",
+                Messages::Moderation::DENIED[1] + "@" + to_string((message->chat->id)));
+        keyboard->inlineKeyboard.push_back({approveButton, declineButton});
 
-    // send to moderator with Inline keyboard.
-    std::cout<<"Message from user ID "<<message->chat->id<<std::endl;
-    bot_.getApi().copyMessage(Config::admin_ids::tehnokratgod, message->chat->id, message->messageId,{}, "Markdown", {}, false, nullptr, keyboard);
+        logger.logInfo(__FUNCTION__, "Sent to moderation");
+        // send to moderator with Inline keyboard.
+        logger.logInfo(__FUNCTION__, "Message from user ID: ", message->chat->id);
+        bot_.getApi().copyMessage(Config::admin_ids::tehnokratgod, message->chat->id, message->messageId, {},
+                                  "Markdown", {}, false, nullptr, keyboard);
+        logger.logInfo(__FUNCTION__, "On moderation");
+    }
+    catch (std::exception& exception){
+        logger.logError(__FUNCTION__, exception.what());
+    }
 }
 
 void CommandHandler::handleCallbackQuery(const TgBot::CallbackQuery::Ptr& callback) {
-    std::string moderation_result = callback->data.substr(0, callback->data.find('@'));
-    std::cout<<"From callback: "<<moderation_result<<std::endl;
-    std::string user_id = callback->data.substr(callback->data.find('@')+1);
-    std::cout<<"From callback: "<<user_id<<std::endl;
+    try {
+        std::string moderation_result = callback->data.substr(0, callback->data.find('@'));
+        logger.logInfo(__FUNCTION__, "From callback: ", moderation_result.c_str());
+        std::string user_id = callback->data.substr(callback->data.find('@') + 1);
+        logger.logInfo(__FUNCTION__, "From callback: ", user_id.c_str());
 
-    if(moderation_result == Messages::Moderation::DENIED[1]) {
-        bot_.getApi().sendMessage(user_id, Messages::Moderation::DENIED[2]);
+        if (moderation_result == Messages::Moderation::DENIED[1]) {
+            bot_.getApi().sendMessage(user_id, Messages::Moderation::DENIED[2]);
+        }
+        if (moderation_result == Messages::Moderation::SUCCESS[1]) {
+            bot_.getApi().copyMessage(Config::chat_ids::dev_channel_id, callback->message->chat->id,
+                                      callback->message->messageId);
+            bot_.getApi().sendMessage(user_id, Messages::Moderation::SUCCESS[2]);
+        }
+        bot_.getApi().deleteMessage(callback->message->chat->id, callback->message->messageId);
+    } catch (std::exception& exception) {
+        logger.logError(__FUNCTION__, exception.what());
     }
-    if(moderation_result == Messages::Moderation::SUCCESS[1]){
-        bot_.getApi().copyMessage(Config::chat_ids::dev_channel_id, callback->message->chat->id, callback->message->messageId);
-        bot_.getApi().sendMessage(user_id, Messages::Moderation::SUCCESS[2]);
-    }
-    bot_.getApi().deleteMessage(callback->message->chat->id, callback->message->messageId);
 }

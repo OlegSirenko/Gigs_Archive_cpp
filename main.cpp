@@ -5,19 +5,21 @@
 #include <string>
 #include "tgbot/tgbot.h"
 #include "modules/CommandHandler.h"
-
+#include "boost/filesystem.hpp"
 
 using namespace TgBot;
 
+
 int main() {
-    std::string token(getenv("TOKEN"));
-    std::string workspace(getenv("ENV"));
-    printf("Token: %s\n", token.c_str());
+    //std::string token("");
+    std::string workspace(boost::filesystem::current_path().string());
+    //printf("Token: %s\n", token.c_str());
     std::cout<<"Workspave: "<<workspace<<std::endl;
-    Bot bot(token);
+    Bot bot(getenv("TOKEN"));
 
     CommandHandler commandHandler(bot, workspace);
     commandHandler.register_commands();
+    commandHandler.logger.logInfo(__FUNCTION__ , "Commands registered");
 
     signal(SIGINT, [](int s) {
         printf("SIGINT got\n");
@@ -28,9 +30,10 @@ int main() {
         printf("Bot username: %s\n", bot.getApi().getMe()->username.c_str());
         bot.getApi().deleteWebhook();
 
-        TgLongPoll longPoll(bot, 100, 1);
+        TgLongPoll longPoll(bot);
         while (true) {
             //printf("Long poll started\n");
+            commandHandler.logger.logInfo(__FUNCTION__ , "Long poll started");
 
             longPoll.start();
         }

@@ -10,11 +10,13 @@
 #include "string"
 #include "../resources/messages.hpp"
 #include "../resources/config.hpp"
+#include "Logger.h"
 
 class CommandHandler {
 public:
     explicit CommandHandler(TgBot::Bot&, std::string);
     void register_commands();
+    Logger logger;
 
 private:
     TgBot::Bot& bot_;
