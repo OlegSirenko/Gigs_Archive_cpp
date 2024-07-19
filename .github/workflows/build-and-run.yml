@@ -47,5 +47,5 @@ jobs:
       env:
         TOKEN: ${{ secrets.TOKEN }}
       working-directory: ${{github.workspace}}/build
-      run: export TOKEN = "$TOKEN" && ./Gigs_Archive
+      run: ./Gigs_Archive
 
