@@ -9,16 +9,17 @@
 
 using namespace TgBot;
 
+Logger logger_sigintHandler;
+
 void sigintHandler(int signal) {
+    logger_sigintHandler.logInfo("SIGINT received: ", signal);
     std::cout << "SIGINT received. Exiting gracefully..." << std::endl;
     exit(0);
 }
 
 int main() {
-    //std::string token("");
     std::string workspace(boost::filesystem::current_path().string());
-    //printf("Token: %s\n", token.c_str());
-    std::cout<<"Workspave: "<<workspace<<std::endl;
+    std::cout<<"Workspace: "<<workspace<<std::endl;
     Bot bot(getenv("TOKEN"));
 
     CommandHandler commandHandler(bot, workspace);
