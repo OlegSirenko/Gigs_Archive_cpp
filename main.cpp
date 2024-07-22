@@ -29,7 +29,7 @@ int main() {
 
     Bot bot(token);
 
-    CommandHandler commandHandler(bot, "Workspace");
+    CommandHandler commandHandler(bot, workspace);
     commandHandler.register_commands();
     commandHandler.logger.logInfo(__FUNCTION__ , "Commands registered");
 
