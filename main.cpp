@@ -9,10 +9,8 @@
 
 using namespace TgBot;
 
-Logger logger_sigintHandler;
 
 void sigintHandler(int signal) {
-    logger_sigintHandler.logInfo("SIGINT received: ", signal);
     std::cout << "SIGINT received. Exiting gracefully..." << std::endl;
     exit(0);
 }
@@ -20,9 +18,18 @@ void sigintHandler(int signal) {
 int main() {
     std::string workspace(boost::filesystem::current_path().string());
     std::cout<<"Workspace: "<<workspace<<std::endl;
-    Bot bot(getenv("TOKEN"));
 
-    CommandHandler commandHandler(bot, workspace);
+    ifstream fileHandler(workspace + "/resources/token.txt");
+    if(!fileHandler.is_open()){
+        std::cerr << "Could not open file" << workspace + "/resources/token.txt" <<std::endl;
+        return 1;
+    }
+    std::string token;
+    getline(fileHandler, token);
+
+    Bot bot(token);
+
+    CommandHandler commandHandler(bot, "Workspace");
     commandHandler.register_commands();
     commandHandler.logger.logInfo(__FUNCTION__ , "Commands registered");
 
