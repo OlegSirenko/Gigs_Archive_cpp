@@ -12,8 +12,8 @@ namespace Messages {
     }
     namespace Help {
         namespace Common {
-            const string GREETING = "Дарова, этот бот потсит афиши в канал https://t.me/GigsArchive ";
-            const string EXAMPLE = "Чтобы добавить новую афишу, вам требуется написать #афиша и свой текст, добавить фотографию афиши, например: ";
+            const string GREETING = "Дарова, этот бот постит афиши в канал https://t.me/GigsArchive ";
+            const string EXAMPLE = "Просто скинь фото афиши и он появится в канале. Можешь добавить подпись к картинке с описанием или хэштегом";
             const string AVAILABLE_COMMANDS = "Список доступных комманд:\n";
         }
 
