@@ -69,10 +69,9 @@ void CommandHandler::handlePoster(const TgBot::Message::Ptr& message){
             return;
         }
 
-
         if(!message->photo.data()){
             logger.logWarn(__FUNCTION__, "No photo");
-            bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_PHOTO);
+            //bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_PHOTO);
             return;
         }
 
