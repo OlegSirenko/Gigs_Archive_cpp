@@ -63,23 +63,30 @@ void CommandHandler::handlePoster(const TgBot::Message::Ptr& message){
             return;
 
         }
+
+        if(message->isAutomaticForward){
+            logger.logInfo(__FUNCTION__ , "Automatic forwarded message");
+            return;
+        }
+
+
         if(!message->photo.data()){
             logger.logWarn(__FUNCTION__, "No photo");
             bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_PHOTO);
             return;
         }
 
-        if((message->caption.empty() != 0)){
-            logger.logWarn(__FUNCTION__, "Caption empty");
-            bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_CAPTION);
-            return;
-        }
+//        if((message->caption.empty() != 0)){
+//            logger.logWarn(__FUNCTION__, "Caption empty");
+//            bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_CAPTION);
+//            return;
+//        }
 
-        if(message->caption.find(Messages::CommonNames::POSTER_RU) == std::string::npos){
-            logger.logWarn(__FUNCTION__, "Caption not valid: ", message->caption.c_str() , " from: ", (message->chat->firstName).c_str());
-            bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_CAPTION);
-            return;
-        }
+//        if(message->caption.find(Messages::CommonNames::POSTER_RU) == std::string::npos){
+//            logger.logWarn(__FUNCTION__, "Caption not valid: ", message->caption.c_str() , " from: ", (message->chat->firstName).c_str());
+//            bot_.getApi().sendMessage(message->chat->id, Messages::Help::UnknownCommands::POSTER_NO_CAPTION);
+//            return;
+//        }
 
         bot_.getApi().sendMessage(message->chat->id, Messages::Moderation::ON_MODERATION);
 
