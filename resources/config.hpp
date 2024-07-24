@@ -11,6 +11,7 @@ namespace Config {
         const long main_discussion_id = -1001810809387;
     }
     namespace admin_ids {
+	const long moderation_chat = -4261552908;
         const int tehnokratgod = 540929323;
     }
 }

@@ -58,7 +58,7 @@ void CommandHandler::handlePoster(const TgBot::Message::Ptr& message){
             logger.logWarn(__FUNCTION__, "Message from bot");
             return;
         }
-        if(message->chat->id == Config::chat_ids::dev_channel_id || message->chat->id == Config::chat_ids::main_channel_id || message->chat->id == Config::chat_ids::main_discussion_id){
+        if(message->chat->id == Config::chat_ids::dev_channel_id || message->chat->id == Config::chat_ids::main_channel_id || message->chat->id == Config::chat_ids::main_discussion_id || message->chat->id == Config::admin_ids::moderation_chat){
             logger.logInfo(__FUNCTION__, "Message from main channel");
             return;
 
@@ -112,7 +112,7 @@ void CommandHandler::sendToApproval(const TgBot::Message::Ptr &message) {
         logger.logInfo(__FUNCTION__, "Sent to moderation");
         // send to moderator with Inline keyboard.
         logger.logInfo(__FUNCTION__, "Message from user ID: ", message->chat->id);
-        bot_.getApi().copyMessage(Config::admin_ids::tehnokratgod, message->chat->id, message->messageId, {},
+        bot_.getApi().copyMessage(Config::admin_ids::moderation_chat, message->chat->id, message->messageId, {},
                                   "Markdown", {}, false, nullptr, keyboard);
         logger.logInfo(__FUNCTION__, "On moderation");
     }
@@ -132,7 +132,7 @@ void CommandHandler::handleCallbackQuery(const TgBot::CallbackQuery::Ptr& callba
             bot_.getApi().sendMessage(user_id, Messages::Moderation::DENIED[2]);
         }
         if (moderation_result == Messages::Moderation::SUCCESS[1]) {
-            bot_.getApi().copyMessage(Config::chat_ids::dev_channel_id, callback->message->chat->id,
+            bot_.getApi().copyMessage(Config::chat_ids::main_channel_id, callback->message->chat->id,
                                       callback->message->messageId);
             bot_.getApi().sendMessage(user_id, Messages::Moderation::SUCCESS[2]);
         }
