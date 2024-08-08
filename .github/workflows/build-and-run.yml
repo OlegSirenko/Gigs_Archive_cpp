@@ -21,6 +21,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Update enviroment
+      run: sudo apt-get update
     - name: Setup enviroment
       run: sudo apt install g++ make binutils cmake libboost-system-dev libboost-log-dev libssl-dev zlib1g-dev libcurl4-openssl-dev
     - name: Clone TgBot-cpp
